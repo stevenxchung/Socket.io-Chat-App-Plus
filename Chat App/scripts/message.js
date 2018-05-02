@@ -9,12 +9,6 @@ $(function() {
   var $nickBox = $("#nickname");
   var $users = $("#users");
 
-  $messageForm.submit(function(e) {
-    e.preventDefault();
-    socket.emit("send message", $messageBox.val());
-    $messageBox.val("");
-  });
-
   $nickForm.submit(function(e) {
     e.preventDefault();
     socket.emit("new user", $nickBox.val(), function(data) {
@@ -36,7 +30,19 @@ $(function() {
     $users.html(html);
   });
 
+  $messageForm.submit(function(e) {
+    e.preventDefault();
+    socket.emit("send message", $messageBox.val(), function(data, callback) {
+          $chat.prepend('<span class="error">' + data + "</br>");
+    });
+    $messageBox.val("");
+  });
+
   socket.on("new message", function(data) {
-    $chat.prepend(data + "</br>");
+    $chat.prepend('<span class="msg"><strong>' + data.nick + ": </strong>"+ data.msg + "</br>");
+  });
+
+  socket.on("whisper", function(data) {
+    $chat.prepend('<span class="whisper"><strong>' + data.nick + ": </strong>"+ data.msg + "</br>");
   });
 });
