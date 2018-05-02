@@ -38,11 +38,21 @@ $(function() {
     $messageBox.val("");
   });
 
+  socket.on("load msgs", function(docs) {
+    for (i = 0; i < docs.length; i++) {
+      displayMsg(docs[i]);
+    }
+  });
+
   socket.on("new message", function(data) {
-    $chat.prepend('<span class="msg"><strong>' + data.nick + ": </strong>"+ data.msg + "</br>");
+    displayMsg();
   });
 
   socket.on("whisper", function(data) {
-    $chat.prepend('<span class="whisper"><strong>' + data.nick + ": </strong>"+ data.msg + "</br>");
+    $chat.append('<span class="whisper"><strong>' + data.nick + ": </strong>"+ data.msg + "</br>");
   });
+
+  function displayMsg(data) {
+    $chat.append('<span class="msg"><strong>' + data.nick + ": </strong>"+ data.msg + "</br>");
+  }
 });

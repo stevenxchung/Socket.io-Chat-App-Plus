@@ -37,6 +37,12 @@ app.get("/", function(req, res) {
 });
 
 io.sockets.on("connection", function(socket) {
+  var query = Chat.find({});
+  query.sort("-created").limit(8).exec(function(err, docs) {
+    if (err) throw err;
+    console.log("Sending messages!");
+    socket.emit('load msgs', docs);
+  });
 
   socket.on("new user", function(data, callback) {
     if (data in users) {
